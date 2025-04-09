@@ -10,6 +10,8 @@ type SwipeCardsProps = {
   onSwipe: (direction: string, profile: Profile) => void; // Define onSwipe here 
 };
 
+
+
 export default function SwipeCards({ profiles, onLike }: SwipeCardsProps) {
   const [currentIndex, setCurrentIndex] = useState(profiles.length - 1);
   const currentProfile = useMemo(() => profiles[currentIndex], [currentIndex, profiles]);
