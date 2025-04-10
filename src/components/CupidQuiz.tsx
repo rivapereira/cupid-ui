@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import SwipeCards from './SwipeCards';
 import '../app/globals.css';
 
+
 const SentimentChart = dynamic(() => import('@/components/SentimentChart'), { ssr: false });
 
 export type Profile = {
@@ -16,6 +17,7 @@ export type Profile = {
   traits: string[];
 };
 
+
 const quizQuestions = [
   { label: "How old are you?", name: "age", type: "slider", min: 18, max: 60 },
   { label: "How tall are you? (in cm)", name: "height", type: "slider", min: 140, max: 210 },
@@ -25,6 +27,41 @@ const quizQuestions = [
   { label: "What’s your current relationship status?", name: "orientation", type: "select", options: ["single", "seeing someone", "open relationship"] },
   { label: "How do you identify your gender?", name: "sex", type: "select", options: ["female", "male", "nonbinary"] }
 ];
+
+
+const quizQuestions2 = [
+  {
+    label: "What do you do for fun?",
+    name: "fun",
+    placeholder: "Example: I love going hiking, playing video games with friends, and attending local music festivals.",
+    description: "Tell us about your favorite activities! (e.g., 'I love hiking and painting, and I spend my weekends exploring new parks or working on creative projects like photography.')"
+  },
+  {
+    label: "Describe your ideal weekend",
+    name: "weekend",
+    placeholder: "Example: My ideal weekend involves hiking in the mountains on Saturday and relaxing with a good book on Sunday.",
+    description: "Tell us how you like to spend your free time during the weekend! (e.g., 'I love to explore new parks, have picnics with friends, and spend time listening to live acoustic music at cafes.')"
+  },
+  {
+    label: "How would you describe your personality?",
+    name: "personality",
+    placeholder: "Example: I’m introverted, curious, and enjoy creative activities like drawing and writing.",
+    description: "Describe your personality. Are you introverted or extroverted? Creative, adventurous, or something else? (e.g., 'I’m introverted, curious, and enjoy creative activities like drawing and writing.')"
+  },
+  {
+    label: "What type of music do you enjoy?",
+    name: "music",
+    placeholder: "Example: I love indie rock, acoustic, and some J-pop. I enjoy discovering new artists on Spotify every week.",
+    description: "What kind of music do you enjoy listening to? (e.g., 'I love indie rock, acoustic, and some J-pop. I enjoy discovering new artists on Spotify every week.')"
+  },
+  {
+    label: "What are your hobbies?",
+    name: "hobbies",
+    placeholder: "Example: I love drawing, playing video games, photography, and exploring new places to travel.",
+    description: "What are your hobbies? (e.g., 'I love drawing, playing video games, photography, and exploring new places to travel.')"
+  }
+];
+
 
 const vibeProfiles: Record<'Creative' | 'Adventurous' | 'Logical' | 'Tech-Savvy' | 'Introvert' | 'Romantic', string[]> = {
   "Creative": ["artistic", "imaginative", "design-oriented"],
@@ -38,6 +75,7 @@ const vibeProfiles: Record<'Creative' | 'Adventurous' | 'Logical' | 'Tech-Savvy'
 export default function CupidQuiz() {
   const [step, setStep] = useState(1);
   const [quizIndex, setQuizIndex] = useState(0);
+  const [quizIndex2, setQuizIndex2] = useState(0); // For step 2 questions
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string | number>>({});
   const [results, setResults] = useState<any[]>([]);
   const [showSwipes, setShowSwipes] = useState(false);
@@ -53,6 +91,11 @@ export default function CupidQuiz() {
   const handleQuizChange = (name: string, value: string | number) => {
     setQuizAnswers((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleQuizChange2 = (name: string, value: string | number) => {
+    setQuizAnswers((prev) => ({ ...prev, [name]: value }));
+  };
+
 
   const renderInputField = (q: any) => {
     if (q.type === 'slider') {
@@ -108,7 +151,7 @@ export default function CupidQuiz() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch('http://localhost:8000/predict', {
+      const res = await fetch('http://localhost:8000/predict/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,35 +188,21 @@ export default function CupidQuiz() {
       <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-6 space-y-6">
         <h1 className="text-3xl font-bold flex items-center gap-2 text-pink-600">🎯 Build Your Vibe</h1>
 
-        {step === 1 && (
-          <div>
-            <label className="font-semibold">What do you do for fun?</label>
-            <textarea
-              value={quizAnswers.fun || ''}
-              onChange={(e) => handleQuizChange('fun', e.target.value)}
-              rows={3}
-              className="w-full p-3 border border-gray-300 rounded-xl mt-2"
-            />
-            <button
-              onClick={() => setStep(2)}
-              className="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg text-lg transition"
-            >
-              Next
-            </button>
-          </div>
-        )}
+        
 
-{step === 2 && (
+        {step === 1 && (
   <div>
-    <label>Describe your ideal weekend</label>
+    <label className="font-semibold">What do you do for fun?</label>
     <textarea
-      value={quizAnswers.weekend || ''}
-      onChange={(e) => handleQuizChange('weekend', e.target.value)}
+      value={quizAnswers.fun || ''}
+      onChange={(e) => handleQuizChange('fun', e.target.value)}
       rows={3}
       className="w-full p-3 border border-gray-300 rounded-xl mt-2"
+      placeholder="Example: I love going hiking, playing video games with friends, and attending local music festivals."
     />
+    <p className="text-sm text-gray-500 mt-2">Describe your favorite hobbies or activities in a few sentences!</p>
     <button
-      onClick={() => setStep(3)} // Proceed to the next step
+      onClick={() => setStep(2)}
       className="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg text-lg transition"
     >
       Next
@@ -181,10 +210,39 @@ export default function CupidQuiz() {
   </div>
 )}
 
+{step === 2 && (
+  <div>
+    <h2 className="text-xl font-bold mb-4 text-pink-500">📝 Tell us more about you</h2>
+    <div>
+      <label className="font-semibold">{quizQuestions2[quizIndex2].label}</label>
+      <textarea
+        value={quizAnswers[quizQuestions2[quizIndex2].name] || ''}
+        onChange={(e) => handleQuizChange2(quizQuestions2[quizIndex2].name, e.target.value)}
+        rows={3}
+        placeholder={quizQuestions2[quizIndex2].placeholder}
+        className="w-full p-3 border border-gray-300 rounded-xl mt-2"
+      />
+      <p className="text-sm text-gray-500 mt-2">{quizQuestions2[quizIndex2].description}</p>
+    </div>
+
+    <button
+      onClick={() => {
+        if (quizIndex2 < quizQuestions2.length - 1) {
+          setQuizIndex2(quizIndex2 + 1); // Move to next question
+        } else {
+          setStep(3); // Proceed to next step after all questions are answered
+        }
+      }}
+      className="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg text-lg transition"
+    >
+      {quizIndex2 < quizQuestions2.length - 1 ? 'Next' : 'Next Step'}
+    </button>
+  </div>
+)}
 
 {step === 3 && (
   <div>
-    <label className="font-semibold">Pick a vibe profile (optional)</label>
+    <label className="font-semibold">Pick a vibe profile (Very important)</label>
     <select
       value={userTraits.join(", ")}
       onChange={(e) => handleVibeChange(e.target.value)}
@@ -196,6 +254,12 @@ export default function CupidQuiz() {
       <option value="Tech-Savvy">Tech-Savvy</option>
       <option value="Introvert">Introvert</option>
       <option value="Romantic">Romantic</option>
+      <option value="Sporty">Sporty</option>
+      <option value="Optimistic">Optimistic</option>
+      <option value="Outdoorsy">Outdoorsy</option>
+      <option value="Empathetic">Empathetic</option>
+      <option value="Musical">Musical</option>
+      <option value="Curious">Curious</option>
     </select>
 
     <button

@@ -14,7 +14,9 @@
     "plotly.js": "^3.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-loading": "^2.0.3",
     "react-plotly.js": "^2.6.0",
+    "react-spring": "^9.7.5",
     "react-tinder-card": "^1.6.4"
   },
   "devDependencies": {
