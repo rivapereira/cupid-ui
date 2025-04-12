@@ -1,28 +1,27 @@
 # Global build settings
 [build]
-  # Directory with your source code (where your package.json lives)
-  base = "."  # This tells Netlify to use the current directory (root of the repository)
+  # Root directory where package.json and source code live
+  base = "."
   
-  # Directory that contains the deploy-ready HTML files and assets (usually .next or dist folder)
-  publish = "cupid-ui/.next"  # This should point to the build output folder in the cupid-ui directory
+  # Directory containing deploy-ready assets (usually .next folder for Next.js)
+  publish = "cupid-ui/.next"
 
-  # Default build command
-  command = "npm run build"  # This assumes you're using npm for building your project
+  # Default build command, assuming you're using npm for the build process
+  command = "npm run build"
 
-  # Environment variables (you can override these settings in the Netlify UI if needed)
+  # Node.js environment version for consistency across all environments
   [build.environment]
-  NODE_VERSION = "16.15.0"  # Specify the Node.js version to be used
-  RUBY_VERSION = "2.7.2"  # Or whichever version you need
+  NODE_VERSION = "16.15.0"
+  RUBY_VERSION = "2.7.2" # Ruby version if needed (typically not needed for Next.js)
 
-# Function settings for serverless functions
+# Serverless function settings (if applicable)
 [functions]
-  # Directory containing the serverless functions (this is an absolute path relative to the base directory)
-  directory = "cupid-ui/netlify/functions"  # Ensure this path is correct for your serverless functions
+  directory = "cupid-ui/netlify/functions"  # Path for serverless functions
 
-# Redirects and Headers (Optional)
+# Redirects and headers (Add more specific redirects as needed)
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/index.html"   # Default redirect if no specific route matches
   status = 200
 
 [[headers]]
@@ -32,23 +31,27 @@
     X-XSS-Protection = "1; mode=block"
     Content-Security-Policy = "frame-ancestors https://www.facebook.com"
 
-# Context-specific settings for different branches or environments
+# Context-specific settings for different environments (Production and Deploy Preview)
 [context.production]
-  publish = "cupid-ui/.next"  # Make sure the publish folder is set to .next for production
-  command = "npm run build"  # Replace 'make publish' with 'npm run build' for production
-  environment = { NODE_VERSION = "14.15.3" }
+  publish = "cupid-ui/.next"  # Ensure `.next` is used for production build
+  command = "npm run build"  # Use 'npm run build' instead of any other build commands
+
+  [context.production.environment]
+  NODE_VERSION = "16.15.0"  # Ensure Node.js version compatibility
 
 [context.deploy-preview]
-  publish = "cupid-ui/.next"  # Use .next for preview deployments as well
+  publish = "cupid-ui/.next"  # Same for preview deployments
+  command = "npm run build"  # Use 'npm run build' for preview
 
-[context.deploy-preview.environment]
+  [context.deploy-preview.environment]
   NOT_PRIVATE_ITEM = "not so secret"  # Set any environment variables needed for deploy preview
 
 # Local development overrides (using Netlify Dev)
 [dev]
-  command = "npm run dev"  # Command to run for local development
+  command = "npm run dev"  # Start local development server
   port = 8888
-  publish = "dist"  # This should match where the local build output is stored
+  publish = "cupid-ui/.next"  # Ensure `.next` is used for local dev build output
 
+# Plugins for performance monitoring or other integrations
 [[plugins]]
-  package = "@netlify/plugin-lighthouse"  # Add this plugin for performance monitoring (remove if not needed)
+  package = "@netlify/plugin-lighthouse"  # Optional plugin for Lighthouse performance audits

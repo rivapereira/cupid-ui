@@ -1,26 +1,20 @@
-'use client';
-
+// src/components/SwipeCards.tsx
 import TinderCard from 'react-tinder-card';
 import { useState, useMemo } from 'react';
-import type { Profile } from './CupidQuiz';
+import { Profile } from './CupidQuiz';
 
 type SwipeCardsProps = {
   profiles: Profile[];
-  onLike?: (profile: Profile) => void;
-  onSwipe: (direction: string, profile: Profile) => void; // Define onSwipe here 
+  onSwipe: (direction: string, profile: Profile) => void;
 };
 
-
-
-export default function SwipeCards({ profiles, onLike }: SwipeCardsProps) {
+export default function SwipeCards({ profiles, onSwipe }: SwipeCardsProps) {
   const [currentIndex, setCurrentIndex] = useState(profiles.length - 1);
   const currentProfile = useMemo(() => profiles[currentIndex], [currentIndex, profiles]);
 
   const swiped = (dir: string, profile: Profile) => {
     console.log('You swiped: ', dir, profile.name);
-    if (dir === 'right' && onLike) {
-      onLike(profile);
-    }
+    onSwipe(dir, profile);
     setCurrentIndex((prev) => prev - 1);
   };
 
@@ -39,8 +33,8 @@ export default function SwipeCards({ profiles, onLike }: SwipeCardsProps) {
             onSwipe={(dir) => swiped(dir, profile)}
             onCardLeftScreen={() => outOfFrame(profile.name)}
             preventSwipe={['up', 'down']}
-            swipeRequirementType="position" // Important for desktop!
-            swipeThreshold={80} // Lower this to make swipes easier
+            swipeRequirementType="position"
+            swipeThreshold={80}
             className="absolute"
           >
             <div
