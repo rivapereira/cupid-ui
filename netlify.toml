@@ -12,6 +12,7 @@
   # Environment variables (you can override these settings in the Netlify UI if needed)
   [build.environment]
   NODE_VERSION = "16.15.0"  # Use Node 16.x for compatibility
+  RUBY_VERSION = "2.7.2"  # Or whichever version you need
 
 # Function settings for serverless functions
 [functions]
