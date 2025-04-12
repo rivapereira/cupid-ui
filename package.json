@@ -26,4 +26,8 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   }
+},
+
+"engines": {
+  "node": "16.15.0"  // Ensure the Node version matches what is used in Netlify
 }
