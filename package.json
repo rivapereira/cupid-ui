@@ -27,7 +27,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": "16.x"  
+    "node": "16.15.0"
   },
   "resolutions": {
     "react": "^18.0.0",
