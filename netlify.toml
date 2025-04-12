@@ -1,7 +1,53 @@
+# Global build settings
 [build]
-  base = "cupid-ui"
-  publish = "cupid-ui/.next"
-  command = "npm run build"
+  # Directory with your source code (where your package.json lives)
+  base = "."  # This tells Netlify to use the current directory (root of the repository)
+  
+  # Directory that contains the deploy-ready HTML files and assets (usually .next or dist folder)
+  publish = "cupid-ui/.next"  # This should point to the build output folder in the cupid-ui directory
 
+  # Default build command
+  command = "npm run build"  # This assumes you're using npm for building your project
+
+  # Environment variables (you can override these settings in the Netlify UI if needed)
+  [build.environment]
+    NODE_VERSION = "14.15.3"  # Ensure you're using the correct version of Node.js
+
+# Function settings for serverless functions
 [functions]
-  directory = "cupid-ui/netlify/functions"
+  # Directory containing the serverless functions (this is an absolute path relative to the base directory)
+  directory = "cupid-ui/netlify/functions"  # Ensure this path is correct for your serverless functions
+
+# Redirects and Headers (Optional)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Content-Security-Policy = "frame-ancestors https://www.facebook.com"
+
+# Context-specific settings for different branches or environments
+[context.production]
+  publish = "cupid-ui/.next"  # Make sure the publish folder is set to .next for production
+  command = "npm run build"  # Replace 'make publish' with 'npm run build' for production
+  environment = { NODE_VERSION = "14.15.3" }
+
+[context.deploy-preview]
+  publish = "cupid-ui/.next"  # Use .next for preview deployments as well
+
+[context.deploy-preview.environment]
+  NOT_PRIVATE_ITEM = "not so secret"  # Set any environment variables needed for deploy preview
+
+# Local development overrides (using Netlify Dev)
+[dev]
+  command = "npm run dev"  # Command to run for local development
+  port = 8888
+  publish = "dist"  # This should match where the local build output is stored
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"  # Add this plugin for performance monitoring (remove if not needed)
