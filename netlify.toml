@@ -11,7 +11,7 @@
 
   # Environment variables (you can override these settings in the Netlify UI if needed)
   [build.environment]
-    NODE_VERSION = "14.15.3"  # Ensure you're using the correct version of Node.js
+  NODE_VERSION = "16.15.0"  # Use Node 16.x for compatibility
 
 # Function settings for serverless functions
 [functions]
