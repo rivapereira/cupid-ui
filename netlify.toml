@@ -1,0 +1,7 @@
+[build]
+base = "cupid-ui"  
+publish = "cupid-ui/.next"
+command = "npm run build"
+
+[functions]
+directory = "cupid-ui/netlify/functions"  
