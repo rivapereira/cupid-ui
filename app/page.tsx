@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic'; // For lazy loading
 
+
 // Dynamically import the CupidQuiz component (lazy loading)
 const CupidQuiz = dynamic(() => import('@/components/CupidQuiz'), {
   ssr: false, // Disable server-side rendering for the quiz

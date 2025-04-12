@@ -8,6 +8,9 @@ import '../app/globals.css';
 
 const SentimentChart = dynamic(() => import('@/components/SentimentChart'), { ssr: false });
 
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'; // Default to local if not set
+
+
 export type Profile = {
   name: string;
   image: string;
@@ -135,23 +138,23 @@ export default function CupidQuiz() {
   useEffect(() => {
     const fetchMockProfiles = async () => {
       try {
-        const response = await fetch('http://localhost:8000/mock-profiles');
+        const response = await fetch(`${backendUrl}/mock-profiles`);
         if (!response.ok) {
           throw new Error('Failed to fetch profiles');
         }
         const data = await response.json();
-        setResults(data);
+        setResults(data);  // Update the profile data once fetched
       } catch (error) {
         console.error('Error fetching mock profiles:', error);
       }
     };
-
+  
     fetchMockProfiles();
   }, []);
-
+  
   const handleSubmit = async () => {
     try {
-      const res = await fetch('http://localhost:8000/predict/', {
+      const res = await fetch(`${backendUrl}/predict/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,21 +164,20 @@ export default function CupidQuiz() {
           gender: quizAnswers.sex || 'female',
           orientation: quizAnswers.orientation || 'straight',
           essay: quizAnswers.fun + ' ' + quizAnswers.weekend,
-          traits: userTraits, // Pass user traits here directly
+          traits: userTraits,
         }),
       });
-
+  
       if (!res.ok) throw new Error('Failed to fetch match data');
-
       const data = await res.json();
-      setResults(data.profiles);  // Display the updated profiles with match data
-      setStep(5); // Move to the result page
-      setShowSwipes(true); // Enable swiping after quiz
+      setResults(data.profiles);  // Update results with profiles returned by backend
+      setStep(5);  // Proceed to result step
     } catch (error) {
       console.error(error);
       alert('Failed to fetch match data from the backend.');
     }
   };
+  
 
   const handleSwipe = (direction: string, profile: Profile) => {
     if (direction === 'right') {
@@ -295,11 +297,11 @@ export default function CupidQuiz() {
           </div>
         )}
 
-        {step === 5 && showSwipes && (
+{step === 5 && showSwipes && results.length > 0 && (
           <div>
             <h2 className="text-xl font-bold mb-4 text-pink-500">Your Matches</h2>
             <SwipeCards
-              profiles={results} // Display the profiles returned by the backend, which includes match data
+              profiles={results}
               onSwipe={handleSwipe}
             />
           </div>
@@ -308,3 +310,4 @@ export default function CupidQuiz() {
     </div>
   );
 }
+
